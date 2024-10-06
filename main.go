@@ -31,16 +31,9 @@ func normalizeAndValidateURL(urlString string) (string, bool) {
 	return urlString, err == nil
 }
 
-func main() {
+func MarkdownFromUrl(url string) (string, error) {
 
-	if len(os.Args) != 2 {
-		fmt.Println("Error: Valid URL is required")
-		fmt.Println("Usage: murl <url>")
-		fmt.Println("Example: murl https://example.com")
-		os.Exit(1)
-	}
-
-	urlArg, validUrl := normalizeAndValidateURL(os.Args[1])
+	urlArg, validUrl := normalizeAndValidateURL(url)
 
 	if !validUrl {
 		fmt.Println("Error: Invalid URL")
@@ -69,7 +62,20 @@ func main() {
 
 	domain := extractDomain(urlArg)
 	converter := md.NewConverter(domain, true, nil)
-	markdown, err := converter.ConvertString(bodyHTML)
+
+	return converter.ConvertString(bodyHTML)
+}
+
+func main() {
+
+	if len(os.Args) != 2 {
+		fmt.Println("Error: Valid URL is required")
+		fmt.Println("Usage: murl <url>")
+		fmt.Println("Example: murl https://example.com")
+		os.Exit(1)
+	}
+
+	markdown, err := MarkdownFromUrl(os.Args[1])
 
 	if err != nil {
 		log.Fatalf("Failed to convert HTML to Markdown: %v", err)
